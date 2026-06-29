@@ -225,6 +225,80 @@ const SITE = {
   }
 
   applyBranding();
+
+  var p = SITE.pricing;
+  var st = { size: SITE.defaultSize, type: SITE.moveTypes[0].id, add: {} };
+  SITE.pricing.addOns.forEach(function (a) { st.add[a.id] = false; });
+
+  function money(n) { return '$' + Math.round(n).toLocaleString(); }
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+  function moveMode() {
+    var t = SITE.moveTypes.filter(function (m) { return m.id === st.type; })[0];
+    return t ? t.mode : 'hourly';
+  }
+
+  function renderControls() {
+    document.getElementById('sizes').innerHTML = Object.keys(p.homeSizes).map(function (k) {
+      var on = k === st.size ? ' active' : '';
+      return '<button class="pill' + on + '" data-size="' + k + '">' + esc(p.homeSizes[k].label) + '</button>';
+    }).join('');
+
+    document.getElementById('types').innerHTML = SITE.moveTypes.map(function (m, i) {
+      var on = m.id === st.type ? ' active' : '';
+      var label = m.mode === 'hourly' ? esc(m.label) + ' (' + esc(SITE.brand.serviceArea) + ')' : esc(m.label);
+      return '<button class="pill' + on + '" data-type="' + m.id + '">' + label + '</button>';
+    }).join('');
+
+    document.getElementById('addons').innerHTML = p.addOns.map(function (a) {
+      var on = st.add[a.id] ? ' on' : '';
+      return '<div class="addon' + on + '" data-add="' + a.id + '"><i class="ti ' + a.icon + '"></i> ' + esc(a.label) + '</div>';
+    }).join('');
+  }
+
+  function selectedAddOnIds() {
+    return Object.keys(st.add).filter(function (k) { return st.add[k]; });
+  }
+
+  function render() {
+    var el = document.getElementById('estimate');
+    var r = MoveQuote.estimate(p, { homeSize: st.size, moveMode: moveMode(), addOnIds: selectedAddOnIds() });
+    if (r.contact) {
+      el.innerHTML = '<p class="k">Estimated cost</p><p class="big" style="font-size:26px">Custom quote</p>' +
+        '<p class="fine">' + esc(SITE.copy.longDistanceNote) + '</p>';
+      return;
+    }
+    el.innerHTML = '<p class="k">Estimated cost</p>' +
+      '<p class="big">' + money(r.low) + ' &ndash; ' + money(r.high) + '</p>' +
+      '<p class="meta"><i class="ti ti-users"></i> ' + r.crew + ' movers · ~' + r.hours + ' hrs · $' +
+        p.hourlyRate + '/mover-hour + $' + p.truckFee + ' truck fee</p>' +
+      '<p class="fine">Ballpark estimate, not a binding quote. We confirm the final price after reviewing your move.</p>';
+  }
+
+  document.getElementById('sizes').addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-size]'); if (!btn) return;
+    st.size = btn.dataset.size;
+    this.querySelectorAll('.pill').forEach(function (el) { el.classList.toggle('active', el === btn); });
+    render();
+  });
+  document.getElementById('types').addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-type]'); if (!btn) return;
+    st.type = btn.dataset.type;
+    this.querySelectorAll('.pill').forEach(function (el) { el.classList.toggle('active', el === btn); });
+    render();
+  });
+  document.getElementById('addons').addEventListener('click', function (e) {
+    var btn = e.target.closest('[data-add]'); if (!btn) return;
+    var k = btn.dataset.add; st.add[k] = !st.add[k];
+    btn.classList.toggle('on', st.add[k]);
+    render();
+  });
+
+  renderControls();
+  render();
 })();
 </script>
 </body>
