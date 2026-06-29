@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instant Moving Quote</title>
+<meta name="description" id="metaDesc" content="">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.5.0/tabler-icons.min.css">
+<style>
+  :root{
+    --navy:#0b1841; --blue:#2852da; --blue-dark:#1a3898; --blue-light:#becaf4;
+    --blue-tint:#eff3fe; --ink:#1b2240; --muted:#5a6486; --line:#e2e6f2;
+    --bg:#f6f8fd; --card:#ffffff; --green:#1d8a5f; --green-soft:#e7f4ee; --radius:8px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Roboto',system-ui,-apple-system,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,.serif{font-family:'DM Serif Display',Georgia,serif;font-weight:400}
+  a{color:inherit}
+  .demo-bar{background:var(--navy);color:#aeb9e0;font-size:12.5px;text-align:center;padding:7px 12px;letter-spacing:.2px}
+  .demo-bar[hidden]{display:none}
+  header{background:var(--card);border-bottom:1px solid var(--line)}
+  .wrap{max-width:680px;margin:0 auto;padding:0 18px}
+  .head-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:11px}
+  .brand img{height:48px;width:48px;border-radius:50%}
+  .brand b{font-family:'DM Serif Display',serif;font-size:21px;color:var(--navy);font-weight:400;line-height:1}
+  .brand small{display:block;font-size:11px;font-weight:500;color:var(--muted);letter-spacing:1px;margin-top:3px;text-transform:uppercase}
+  .head-call{text-align:right;font-size:14px}
+  .head-call a{color:var(--blue);font-weight:700;text-decoration:none;white-space:nowrap}
+  .rating{color:var(--muted);font-size:12.5px;margin-top:2px}
+  .rating i{color:#f0a830}
+  .hero{text-align:center;padding:32px 0 6px}
+  .hero h1{font-size:32px;margin:0 0 10px;color:var(--navy);line-height:1.15}
+  .hero p{font-size:15px;color:var(--muted);margin:0 auto;max-width:480px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;margin:22px 0 30px;box-shadow:0 4px 24px rgba(11,24,65,.06)}
+  .lab{font-size:12px;font-weight:700;color:var(--navy);margin:0 0 9px;text-transform:uppercase;letter-spacing:.7px}
+  .group{margin-bottom:22px}
+  .pills{display:flex;gap:8px;flex-wrap:wrap}
+  .pill{padding:9px 15px;border:1.5px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;font-size:14px;font-weight:500;color:var(--muted);font-family:inherit;transition:.12s}
+  .pill:hover{border-color:var(--blue-light)}
+  .pill.active{border-color:var(--blue);background:var(--blue-tint);color:var(--blue-dark);font-weight:700}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px}
+  label.fl{display:block}
+  input{width:100%;font-family:inherit;font-size:14px;padding:10px 12px;border:1.5px solid var(--line);border-radius:var(--radius);background:#fff;color:var(--ink)}
+  input:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-tint)}
+  .addons{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px}
+  .addon{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1.5px solid var(--line);border-radius:10px;cursor:pointer;font-size:14px;font-weight:500;user-select:none;transition:.12s}
+  .addon i{font-size:21px;color:var(--blue)}
+  .addon:hover{border-color:var(--blue-light)}
+  .addon.on{border-color:var(--blue);background:var(--blue-tint)}
+  .est{background:var(--navy);border-radius:12px;padding:22px;color:#fff;margin:24px 0}
+  .est .k{font-size:12px;color:#8e9bd0;text-transform:uppercase;letter-spacing:.8px;margin:0 0 7px;font-weight:700}
+  .est .big{font-family:'DM Serif Display',serif;font-size:38px;margin:0 0 8px;color:#bcd0ff;line-height:1}
+  .est .meta{font-size:13px;color:#aeb9e0;margin:0 0 12px}
+  .est .meta i{vertical-align:-2px}
+  .est .fine{font-size:12px;color:#8089b3;margin:0;line-height:1.5}
+  .lead h3{font-size:22px;margin:0 0 4px;color:var(--navy)}
+  .lead p.sub{font-size:13.5px;color:var(--muted);margin:0 0 14px}
+  .btn{width:100%;background:var(--blue);color:#fff;border:none;padding:14px;border-radius:var(--radius);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:.12s;letter-spacing:.2px}
+  .btn:hover{background:var(--blue-dark)}
+  .btn[disabled]{opacity:.6;cursor:default}
+  .err{color:#b42318;font-size:13px;margin:10px 0 0;text-align:center}
+  .err a{color:var(--blue);font-weight:600}
+  .ok{text-align:center;padding:18px 8px}
+  .ok .circle{width:54px;height:54px;border-radius:50%;background:var(--green-soft);color:var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:30px}
+  .ok h3{font-size:24px;margin:0 0 8px;color:var(--navy)}
+  .ok p{font-size:14.5px;color:var(--muted);margin:0 0 5px}
+  footer{text-align:center;padding:24px 18px 40px;font-size:12.5px;color:var(--muted)}
+  footer a{color:var(--blue);font-weight:500}
+  @media(max-width:480px){.hero h1{font-size:26px}.est .big{font-size:30px}}
+</style>
+</head>
+<body>
+  <div class="demo-bar" id="demoBar" hidden></div>
+
+  <header>
+    <div class="wrap head-row">
+      <div class="brand">
+        <img id="brandLogo" src="" alt="">
+        <div><b id="brandName"></b><small id="brandTagline"></small></div>
+      </div>
+      <div class="head-call">
+        <a id="brandPhone" href=""></a>
+        <div class="rating" id="brandRating"></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="wrap">
+    <div class="hero">
+      <h1 id="heroTitle"></h1>
+      <p id="heroSub"></p>
+    </div>
+
+    <div class="card">
+      <div class="group">
+        <p class="lab">Home size</p>
+        <div class="pills" id="sizes"></div>
+      </div>
+
+      <div class="group">
+        <p class="lab">Move type</p>
+        <div class="pills" id="types"></div>
+      </div>
+
+      <div class="group">
+        <div class="grid">
+          <label class="fl"><p class="lab">Move date</p><input type="date" id="mdate"></label>
+          <label class="fl"><p class="lab">Moving from (ZIP)</p><input type="text" id="from" placeholder="53703" inputmode="numeric"></label>
+          <label class="fl"><p class="lab">Moving to (ZIP)</p><input type="text" id="to" placeholder="53711" inputmode="numeric"></label>
+        </div>
+      </div>
+
+      <div class="group">
+        <p class="lab">Add-ons</p>
+        <div class="addons" id="addons"></div>
+      </div>
+
+      <div class="est" id="estimate"></div>
+
+      <div class="lead" id="leadform">
+        <h3 id="leadTitle"></h3>
+        <p class="sub" id="leadSub"></p>
+        <div class="grid" style="margin-bottom:14px">
+          <input type="text" id="lname" placeholder="Your name">
+          <input type="tel" id="lphone" placeholder="Phone number">
+          <input type="email" id="lemail" placeholder="name@email.com">
+        </div>
+        <button class="btn" id="submit"></button>
+        <p class="err" id="leadErr" hidden></p>
+      </div>
+    </div>
+  </div>
+
+  <footer id="footer"></footer>
+
+<script src="pricing.js"></script>
+<script>
+/* SITE config + UI wiring added in Tasks 2-4 */
+const SITE = {
+  brand: {
+    name: "MoveQuote Movers",
+    tagline: "Moving & delivery specialists",
+    logoUrl: "https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.5.0/icons/outline/truck.svg",
+    serviceArea: "the Madison area",
+    phone: "(608) 555-0100",
+    phoneHref: "tel:6085550100",
+    rating: "5.0 · 50+ reviews",
+    colors: { primary: "#2852da", primaryDark: "#1a3898", dark: "#0b1841" },
+    demoBar: "Concept demo · not a live company website",
+    footer: 'Concept demo built by <a href="https://watchlightinteractive.com" target="_blank" rel="noopener">Watchlight Interactive</a> · prices shown are illustrative placeholders, not actual rates.'
+  },
+  pricing: {
+    hourlyRate: 90,
+    truckFee: 90,
+    roundTo: 10,
+    rangeLow: 0.9,
+    rangeHigh: 1.15,
+    homeSizes: {
+      studio_1br: { label: "Studio / 1 bed", crew: 2, hours: 3 },
+      "2br": { label: "2 bedrooms", crew: 2, hours: 4 },
+      "3br": { label: "3 bedrooms", crew: 3, hours: 5 },
+      "4br": { label: "4+ bedrooms", crew: 4, hours: 7 }
+    },
+    addOns: [
+      { id: "packing", label: "Packing service", icon: "ti-package", effect: { type: "hoursMult", value: 1.25 } },
+      { id: "piano", label: "Piano / safe", icon: "ti-music", effect: { type: "flat", value: 150 } },
+      { id: "heavy", label: "Heavy / specialty", icon: "ti-barbell", effect: { type: "hoursAdd", value: 1 } },
+      { id: "stairs", label: "Stairs (no elevator)", icon: "ti-stairs", effect: { type: "hoursAdd", value: 1 } },
+      { id: "junk", label: "Junk removal", icon: "ti-trash", effect: { type: "flat", value: 120 } }
+    ]
+  },
+  moveTypes: [
+    { id: "local", label: "Local", mode: "hourly" },
+    { id: "long", label: "Long distance", mode: "contact" }
+  ],
+  defaultSize: "2br",
+  copy: {
+    heroTitle: "Get your instant moving estimate",
+    leadTitle: "Lock in your estimate",
+    submitBtn: "Get my estimate & book a call",
+    longDistanceNote: "Long-distance moves are priced by distance and weight. Add your details below and we'll call with a personalized quote."
+  },
+  web3formsKey: ""
+};
+
+(function () {
+  'use strict';
+  var b = SITE.brand, c = SITE.copy;
+
+  function applyBranding() {
+    document.title = b.name + " — Instant Moving Quote";
+    document.getElementById('metaDesc').setAttribute('content',
+      "Get an instant ballpark estimate for your " + b.serviceArea + " move from " + b.name + ".");
+
+    var root = document.documentElement.style;
+    root.setProperty('--blue', b.colors.primary);
+    root.setProperty('--blue-dark', b.colors.primaryDark);
+    root.setProperty('--navy', b.colors.dark);
+
+    var logo = document.getElementById('brandLogo');
+    logo.src = b.logoUrl; logo.alt = b.name + " logo";
+    document.getElementById('brandName').textContent = b.name;
+    document.getElementById('brandTagline').textContent = b.tagline;
+
+    var phone = document.getElementById('brandPhone');
+    phone.href = b.phoneHref;
+    phone.innerHTML = '<i class="ti ti-phone" style="vertical-align:-2px"></i> ' + b.phone;
+    document.getElementById('brandRating').innerHTML =
+      '<i class="ti ti-star-filled"></i>'.repeat(5) + ' ' + b.rating;
+
+    document.getElementById('heroTitle').textContent = c.heroTitle;
+    document.getElementById('heroSub').textContent =
+      "Answer a few quick questions and get a ballpark price in seconds — no waiting on a callback. Serving " + b.serviceArea + ".";
+    document.getElementById('leadTitle').textContent = c.leadTitle;
+    document.getElementById('leadSub').textContent = "We review every move personally and call to confirm your final price.";
+    document.getElementById('submit').textContent = c.submitBtn;
+
+    var demo = document.getElementById('demoBar');
+    if (b.demoBar) { demo.textContent = b.demoBar; demo.hidden = false; }
+    document.getElementById('footer').innerHTML = b.footer;
+  }
+
+  applyBranding();
+})();
+</script>
+</body>
+</html>
