@@ -1,5 +1,7 @@
 # MoveQuote — Instant Moving-Quote Estimator (template)
 
+**Live demo:** https://moving-quote-estimator.vercel.app/
+
 A self-contained, single-page **instant moving-quote estimator** for moving companies.
 A visitor picks home size, move type, and add-ons, gets an instant ballpark price range,
 then submits contact details — capturing a fully-qualified lead (move date, ZIPs, home size,
