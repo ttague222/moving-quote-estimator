@@ -297,6 +297,87 @@ const SITE = {
     render();
   });
 
+  function currentQuoteText() {
+    var r = MoveQuote.estimate(p, { homeSize: st.size, moveMode: moveMode(), addOnIds: selectedAddOnIds() });
+    return r.contact ? 'Custom quote (long distance)' : (money(r.low) + ' – ' + money(r.high));
+  }
+
+  function leadPayload(name, phone, email) {
+    var sizeLabel = p.homeSizes[st.size] ? p.homeSizes[st.size].label : st.size;
+    var addLabels = p.addOns.filter(function (a) { return st.add[a.id]; })
+      .map(function (a) { return a.label; }).join(', ') || 'None';
+    return {
+      name: name, phone: phone, email: email,
+      move_date: document.getElementById('mdate').value || 'Not provided',
+      from_zip: document.getElementById('from').value || 'Not provided',
+      to_zip: document.getElementById('to').value || 'Not provided',
+      home_size: sizeLabel,
+      move_type: st.type,
+      add_ons: addLabels,
+      quoted_range: currentQuoteText()
+    };
+  }
+
+  function mailtoFallback(data) {
+    // encodeURIComponent each line so user input (name, ZIPs, etc.) cannot break out of
+    // the href attribute when this URL is inserted via innerHTML (XSS / attribute injection).
+    var body = Object.keys(data).map(function (k) {
+      return encodeURIComponent(k + ': ' + data[k]);
+    }).join('%0D%0A');
+    return 'mailto:?subject=' + encodeURIComponent('Moving quote request — ' + data.name) + '&body=' + body;
+  }
+
+  function showSuccess(name, phone, quote, note) {
+    document.getElementById('leadform').innerHTML = '<div class="ok">' +
+      '<div class="circle"><i class="ti ti-check"></i></div>' +
+      '<h3>Thanks, ' + esc(name) + ' — you’re all set</h3>' +
+      '<p>Your estimate: <strong style="color:var(--ink)">' + esc(quote) + '</strong></p>' +
+      '<p>We’ll call ' + esc(phone) + ' within 1 business day to confirm.</p>' +
+      (note ? '<p class="err" style="margin-top:14px">' + note + '</p>' : '') +
+      '</div>';
+  }
+
+  document.getElementById('submit').addEventListener('click', function () {
+    var name = document.getElementById('lname').value.trim();
+    var phone = document.getElementById('lphone').value.trim();
+    var email = document.getElementById('lemail').value.trim();
+    var errEl = document.getElementById('leadErr');
+    errEl.hidden = true;
+    if (!name || !phone) { errEl.textContent = 'Add your name and phone so we can confirm your move.'; errEl.hidden = false; return; }
+
+    var data = leadPayload(name, phone, email);
+    var quote = data.quoted_range;
+    var btn = document.getElementById('submit');
+
+    // No key configured (template/demo): skip the network call, show mailto fallback
+    // inside the success panel so it survives (leadErr lives inside leadform).
+    if (!SITE.web3formsKey) {
+      showSuccess(name, phone, quote,
+        'Demo mode — no lead inbox configured. <a href="' + mailtoFallback(data) + '">Email the request instead</a>.');
+      return;
+    }
+
+    btn.disabled = true; btn.textContent = 'Sending…';
+    fetch('https://api.web3forms.com/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(Object.assign({
+        access_key: SITE.web3formsKey,
+        subject: 'New moving quote — ' + name + ' (' + SITE.brand.name + ')'
+      }, data))
+    }).then(function (res) {
+      if (!res.ok) throw new Error('bad status ' + res.status);
+      return res.json();
+    }).then(function () {
+      showSuccess(name, phone, quote);
+    }).catch(function () {
+      btn.disabled = false; btn.textContent = SITE.copy.submitBtn;
+      errEl.innerHTML = 'Something went wrong sending your request. Please try again, or <a href="' +
+        mailtoFallback(data) + '">email it to us</a>.';
+      errEl.hidden = false;
+    });
+  });
+
   renderControls();
   render();
 })();
