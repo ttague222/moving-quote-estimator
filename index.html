@@ -36,7 +36,7 @@
   .hero h1{font-size:32px;margin:0 0 10px;color:var(--navy);line-height:1.15}
   .hero p{font-size:15px;color:var(--muted);margin:0 auto;max-width:480px}
   .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;margin:22px 0 30px;box-shadow:0 4px 24px rgba(11,24,65,.06)}
-  .lab{font-size:12px;font-weight:700;color:var(--navy);margin:0 0 9px;text-transform:uppercase;letter-spacing:.7px}
+  .lab{display:block;font-size:12px;font-weight:700;color:var(--navy);margin:0 0 9px;text-transform:uppercase;letter-spacing:.7px}
   .group{margin-bottom:22px}
   .pills{display:flex;gap:8px;flex-wrap:wrap}
   .pill{padding:9px 15px;border:1.5px solid var(--line);border-radius:999px;background:#fff;cursor:pointer;font-size:14px;font-weight:500;color:var(--muted);font-family:inherit;transition:.12s}
@@ -108,9 +108,9 @@
 
       <div class="group">
         <div class="grid">
-          <label class="fl"><p class="lab">Move date</p><input type="date" id="mdate"></label>
-          <label class="fl"><p class="lab">Moving from (ZIP)</p><input type="text" id="from" placeholder="53703" inputmode="numeric"></label>
-          <label class="fl"><p class="lab">Moving to (ZIP)</p><input type="text" id="to" placeholder="53711" inputmode="numeric"></label>
+          <label class="fl"><span class="lab">Move date</span><input type="date" id="mdate"></label>
+          <label class="fl"><span class="lab">Moving from (ZIP)</span><input type="text" id="from" placeholder="53703" inputmode="numeric"></label>
+          <label class="fl"><span class="lab">Moving to (ZIP)</span><input type="text" id="to" placeholder="53711" inputmode="numeric"></label>
         </div>
       </div>
 
@@ -144,7 +144,7 @@ const SITE = {
   brand: {
     name: "MoveQuote Movers",
     tagline: "Moving & delivery specialists",
-    logoUrl: "https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.5.0/icons/outline/truck.svg",
+    logoUrl: "logo.svg",
     serviceArea: "the Madison area",
     phone: "(608) 555-0100",
     phoneHref: "tel:6085550100",
@@ -182,6 +182,7 @@ const SITE = {
     heroTitle: "Get your instant moving estimate",
     leadTitle: "Lock in your estimate",
     submitBtn: "Get my estimate & book a call",
+    heroSub: "Answer a few quick questions and get a ballpark price in seconds — no waiting on a callback. Serving {serviceArea}.",
     longDistanceNote: "Long-distance moves are priced by distance and weight. Add your details below and we'll call with a personalized quote."
   },
   web3formsKey: ""
@@ -213,8 +214,7 @@ const SITE = {
       '<i class="ti ti-star-filled"></i>'.repeat(5) + ' ' + b.rating;
 
     document.getElementById('heroTitle').textContent = c.heroTitle;
-    document.getElementById('heroSub').textContent =
-      "Answer a few quick questions and get a ballpark price in seconds — no waiting on a callback. Serving " + b.serviceArea + ".";
+    document.getElementById('heroSub').textContent = c.heroSub.replace('{serviceArea}', b.serviceArea);
     document.getElementById('leadTitle').textContent = c.leadTitle;
     document.getElementById('leadSub').textContent = "We review every move personally and call to confirm your final price.";
     document.getElementById('submit').textContent = c.submitBtn;
@@ -347,7 +347,6 @@ const SITE = {
 
     var data = leadPayload(name, phone, email);
     var quote = data.quoted_range;
-    var btn = document.getElementById('submit');
 
     // No key configured (template/demo): skip the network call, show mailto fallback
     // inside the success panel so it survives (leadErr lives inside leadform).
@@ -357,6 +356,7 @@ const SITE = {
       return;
     }
 
+    var btn = document.getElementById('submit');
     btn.disabled = true; btn.textContent = 'Sending…';
     fetch('https://api.web3forms.com/submit', {
       method: 'POST',

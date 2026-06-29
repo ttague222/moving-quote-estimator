@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="MoveQuote">
+  <circle cx="48" cy="48" r="48" fill="#2852da"/>
+  <rect x="16" y="34" width="36" height="20" rx="2.5" fill="#ffffff"/>
+  <path d="M52 40 h14 l10 10 v4 h-24 z" fill="#ffffff"/>
+  <rect x="55.5" y="43" width="9" height="6" rx="1" fill="#2852da"/>
+  <circle cx="30" cy="56" r="6.5" fill="#0b1841"/>
+  <circle cx="64" cy="56" r="6.5" fill="#0b1841"/>
+  <circle cx="30" cy="56" r="2.6" fill="#ffffff"/>
+  <circle cx="64" cy="56" r="2.6" fill="#ffffff"/>
+</svg>
