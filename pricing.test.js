@@ -3,7 +3,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { estimate } = require('./pricing.js');
 
-// Sample pricing mirroring the original Matt's Movers defaults.
+// Sample pricing mirroring the template's default rates.
 const PRICING = {
   hourlyRate: 90,
   truckFee: 90,
