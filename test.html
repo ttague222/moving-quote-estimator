@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MoveQuote — pricing tests</title>
+<style>body{font-family:system-ui,sans-serif;max-width:640px;margin:40px auto;padding:0 16px}
+.pass{color:#1d8a5f}.fail{color:#b42318;font-weight:700}li{margin:4px 0}</style>
+</head>
+<body>
+<h1>Pricing tests</h1>
+<ul id="out"></ul>
+<script src="pricing.js"></script>
+<script>
+var PRICING = {
+  hourlyRate: 90, truckFee: 90, roundTo: 10, rangeLow: 0.9, rangeHigh: 1.15,
+  homeSizes: { studio_1br:{crew:2,hours:3}, '2br':{crew:2,hours:4}, '3br':{crew:3,hours:5}, '4br':{crew:4,hours:7} },
+  addOns: [
+    { id:'packing', effect:{type:'hoursMult', value:1.25} },
+    { id:'piano', effect:{type:'flat', value:150} },
+    { id:'heavy', effect:{type:'hoursAdd', value:1} },
+    { id:'stairs', effect:{type:'hoursAdd', value:1} },
+    { id:'junk', effect:{type:'flat', value:120} }
+  ]
+};
+var cases = [
+  ['2BR no add-ons', {homeSize:'2br',moveMode:'hourly',addOnIds:[]}, {crew:2,hours:4,low:730,high:930}],
+  ['3BR + packing', {homeSize:'3br',moveMode:'hourly',addOnIds:['packing']}, {crew:3,hours:6.5,low:1600,high:2040}],
+  ['4BR + heavy + stairs', {homeSize:'4br',moveMode:'hourly',addOnIds:['heavy','stairs']}, {crew:4,hours:9,low:3000,high:3830}],
+  ['2BR + piano', {homeSize:'2br',moveMode:'hourly',addOnIds:['piano']}, {crew:2,hours:4,low:860,high:1100}],
+  ['long distance', {homeSize:'2br',moveMode:'contact',addOnIds:[]}, {contact:true}]
+];
+var out = document.getElementById('out');
+cases.forEach(function (c) {
+  var got = MoveQuote.estimate(PRICING, c[1]);
+  var ok = JSON.stringify(got) === JSON.stringify(c[2]);
+  var li = document.createElement('li');
+  li.className = ok ? 'pass' : 'fail';
+  li.textContent = (ok ? 'PASS' : 'FAIL') + ' — ' + c[0] + (ok ? '' : ' — got ' + JSON.stringify(got));
+  out.appendChild(li);
+});
+</script>
+</body>
+</html>
